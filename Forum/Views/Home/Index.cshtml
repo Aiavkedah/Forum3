@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Forum.Models.ForumCategory>
+
+@{
+    ViewBag.Title = "Forum";
+}
+
+@{
+    string editName = "editName";
+    string editNameCount;
+    int count = 1;
+}
+<div class="jumbotron">
+    <table class="table">
+        <tr>
+            <th>
+                Categories
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            editNameCount = editName + count;
+            <tr>
+                <td>
+                    <div id=@editNameCount>
+                        @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Name)), "Posts", new { id = item.ID })
+                    </div>
+                </td>
+                <td>
+                    @Ajax.ActionLink("Edit", "Edit", new { id = item.ID }, new AjaxOptions { UpdateTargetId = editNameCount }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+
+            count = count + 1;
+        }
+    </table>
+
+    @using (Html.BeginForm())
+    {
+        <br />@Html.Label("Add new category")
+        <br />@Html.TextBox("Name")
+        @Html.ValidationMessage("Name")
+        <br /><input type="submit" value="Add" />
+    }
+</div>

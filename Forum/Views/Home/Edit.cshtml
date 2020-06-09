@@ -1,0 +1,19 @@
+﻿@model Forum.Models.ForumCategory
+
+<div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.ID)
+
+        <div>
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+    }
+</div>

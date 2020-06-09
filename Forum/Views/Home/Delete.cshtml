@@ -1,0 +1,13 @@
+﻿@model Forum.Models.ForumCategory
+
+<div class="jumbotron">
+
+    <h2>Delete @Html.DisplayFor(model => model.Name)?</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <input type="submit" value="Delete" />
+    }
+
+</div>
