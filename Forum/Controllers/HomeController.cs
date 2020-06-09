@@ -1,4 +1,5 @@
 ﻿using Forum.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,9 +15,11 @@ namespace Forum.Controllers
         ForumContext Db = new ForumContext();
 
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int page=1)
         {
-            return View(await Db.ForumCategories.ToListAsync());
+            int pageSize = 5;
+            var categories = await Db.ForumCategories.ToListAsync();
+            return View(categories.ToPagedList(page, pageSize));
         }
 
         [HttpPost]
@@ -27,8 +30,8 @@ namespace Forum.Controllers
                 Db.ForumCategories.Add(category);
                 Db.SaveChanges();
             }
-
-            return View(Db.ForumCategories);
+            
+            return RedirectToAction("Posts", new { id = category.ID });
         }
 
         [HttpGet]

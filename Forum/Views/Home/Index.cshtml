@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Forum.Models.ForumCategory>
+﻿@model PagedList.IPagedList<Forum.Models.ForumCategory>
+@using PagedList.Mvc;
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Forum";
@@ -9,37 +11,37 @@
     string editNameCount;
     int count = 1;
 }
-    <div class="jumbotron">
-        <table class="table">
-            <tr>
-                <th>
-                    Categories
+<div class="jumbotron">
+    <table class="table">
+        <tr>
+            <th>
+                Categories
 
-                </th>
+            </th>
+        </tr>
+
+        <div id="hh"></div>
+
+        @foreach (var item in Model)
+        {
+            editNameCount = editName + count;
+            <tr>
+                <td>
+                    <div>
+                        @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Name)), "Posts", new { id = item.ID })
+                    </div>
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "viewDialog", data_dialog_title = "Edit category" }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
             </tr>
 
-            <div id="hh"></div>
+            count = count + 1;
+        }
+    </table>
 
-            @foreach (var item in Model)
-            {
-                editNameCount = editName + count;
-                <tr>
-                    <td>
-                        <div>
-                            @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Name)), "Posts", new { id = item.ID })
-                        </div>
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "viewDialog", data_dialog_title = "Edit category" }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-                    </td>
-                </tr>
-
-                count = count + 1;
-            }
-        </table>
-
-        <script>
+    <script>
             $(document).ready(function () {
 
                 $.ajaxSetup({ cache: false });
@@ -72,12 +74,15 @@
                         });
                 });
             });
-        </script>
-        @using (Html.BeginForm())
-        {
-            <br />@Html.Label("Add new category")
-            <br />@Html.TextBox("Name")
-            @Html.ValidationMessage("Name")
-            <br /><input type="submit" value="Add" />
-        }
-    </div>
+    </script>
+    @using (Html.BeginForm())
+    {
+        <br />@Html.Label("Add new category")
+        <br />@Html.TextBox("Name")
+        @Html.ValidationMessage("Name")
+        <br /><input type="submit" value="Add" />
+    }
+    @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</div>
