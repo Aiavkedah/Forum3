@@ -9,38 +9,75 @@
     string editNameCount;
     int count = 1;
 }
-<div class="jumbotron">
-    <table class="table">
-        <tr>
-            <th>
-                Categories
-            </th>
-        </tr>
-
-        @foreach (var item in Model)
-        {
-            editNameCount = editName + count;
+    <div class="jumbotron">
+        <table class="table">
             <tr>
-                <td>
-                    <div id=@editNameCount>
-                        @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Name)), "Posts", new { id = item.ID })
-                    </div>
-                </td>
-                <td>
-                    @Ajax.ActionLink("Edit", "Edit", new { id = item.ID }, new AjaxOptions { UpdateTargetId = editNameCount }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-                </td>
+                <th>
+                    Categories
+
+                </th>
             </tr>
 
-            count = count + 1;
-        }
-    </table>
+            <div id="hh"></div>
 
-    @using (Html.BeginForm())
-    {
-        <br />@Html.Label("Add new category")
-        <br />@Html.TextBox("Name")
-        @Html.ValidationMessage("Name")
-        <br /><input type="submit" value="Add" />
-    }
-</div>
+            @foreach (var item in Model)
+            {
+                editNameCount = editName + count;
+                <tr>
+                    <td>
+                        <div>
+                            @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Name)), "Posts", new { id = item.ID })
+                        </div>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "viewDialog", data_dialog_title = "Edit category" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    </td>
+                </tr>
+
+                count = count + 1;
+            }
+        </table>
+
+        <script>
+            $(document).ready(function () {
+
+                $.ajaxSetup({ cache: false });
+
+                $(".viewDialog").on("click", function (e) {
+                    e.preventDefault();
+
+                    $("<div id='dialogContent'></div>")
+                        .addClass("dialog")
+                        .appendTo("#hh")
+                        .load(this.href)
+                        .dialog({
+                            title: $(this).attr("data-dialog-title"),
+                            close: function () { $(this).remove() },
+                            modal: true,
+                            buttons: {
+                                "Сохранить": function () {
+                                    $.ajax({
+                                     url: "@Url.Action("Edit", "Home")",
+                                     type: "POST",
+                                     data: $('form').serialize(),
+                                     datatype: "json",
+                                     success: function (result) {
+
+                                         $("#dialogContent").html(result);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                });
+            });
+        </script>
+        @using (Html.BeginForm())
+        {
+            <br />@Html.Label("Add new category")
+            <br />@Html.TextBox("Name")
+            @Html.ValidationMessage("Name")
+            <br /><input type="submit" value="Add" />
+        }
+    </div>

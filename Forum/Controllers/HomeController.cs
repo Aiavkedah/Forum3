@@ -117,14 +117,14 @@ namespace Forum.Controllers
 
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            if (id != null)
             {
-                return RedirectToAction("Index", Db.ForumCategories);
-            }
-            ForumCategory category = Db.ForumCategories.Find(id);
-            if (category != null)
-            {
-                return PartialView("Edit", category);
+                ForumCategory category = Db.ForumCategories.Find(id);
+
+                if (category != null)
+                {
+                    return PartialView("Edit", category);
+                }
             }
             return RedirectToAction("Index", Db.ForumCategories);
         }
@@ -133,10 +133,14 @@ namespace Forum.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ForumCategory category)
         {
-            Db.Entry(category).State = EntityState.Modified;
-            Db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                Db.Entry(category).State = EntityState.Modified;
+                Db.SaveChanges();
+                return RedirectToAction("Index", Db.ForumCategories);
+            }
 
-            return RedirectToAction("Index", Db.ForumCategories);
+            return PartialView("Edit", category);
         }
     }
 }

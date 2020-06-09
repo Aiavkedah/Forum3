@@ -11,6 +11,7 @@ namespace Forum.Models
         public int ID { get; set; }
 
         [Required]
+      
         public string Name { get; set; }
     }
 }
