@@ -118,7 +118,7 @@ namespace Forum.Controllers
         }
 
 
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, int page=1)
         {
             if (id != null)
             {
@@ -134,13 +134,14 @@ namespace Forum.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(ForumCategory category)
+        public ActionResult Edit(ForumCategory category, int page)
         {
             if (ModelState.IsValid)
             {
                 Db.Entry(category).State = EntityState.Modified;
                 Db.SaveChanges();
-                return RedirectToAction("Index", Db.ForumCategories);
+              
+                return RedirectToAction("Index", new { page = page });
             }
 
             return PartialView("Edit", category);

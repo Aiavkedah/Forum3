@@ -6,11 +6,6 @@
     ViewBag.Title = "Forum";
 }
 
-@{
-    string editName = "editName";
-    string editNameCount;
-    int count = 1;
-}
 <div class="jumbotron">
     <table class="table">
         <tr>
@@ -24,7 +19,6 @@
 
         @foreach (var item in Model)
         {
-            editNameCount = editName + count;
             <tr>
                 <td>
                     <div>
@@ -32,12 +26,10 @@
                     </div>
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "viewDialog", data_dialog_title = "Edit category" }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, page = Model.PageNumber }, new { @class = "viewDialog", data_dialog_title = "Edit category" }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.ID })
                 </td>
             </tr>
-
-            count = count + 1;
         }
     </table>
 
