@@ -12,7 +12,7 @@ namespace Forum.Controllers
 {
     public class HomeController : Controller
     {
-        ForumContext Db = new ForumContext();
+        public ForumContext Db = new ForumContext();
 
         [HttpGet]
         public async Task<ActionResult> Index(int page=1)
@@ -53,8 +53,11 @@ namespace Forum.Controllers
         [HttpPost]
         public ActionResult Posts(ForumPost post)
         {
-            Db.ForumPosts.Add(post);
-            Db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                Db.ForumPosts.Add(post);
+                Db.SaveChanges();
+            }
 
             return RedirectToAction("Post", new { id = post.ID });
         }
@@ -86,7 +89,7 @@ namespace Forum.Controllers
             Db.SaveChanges();
 
             IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId);
-            ViewBag.ForumComment = comments;
+            //ViewBag.ForumComment = comments;
             ViewBag.PostId = newComment.ForumPostId;
             return View(comments);
         }
