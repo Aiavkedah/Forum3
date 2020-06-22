@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -94,30 +95,79 @@ namespace Forum.Controllers
             return View(comments);
         }
 
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, string item)
         {
-            ForumCategory category = Db.ForumCategories.Find(id);
+            object obj;
 
-            if (category == null)
+            Type type = Type.GetType(item);
+
+            if (typeof(ForumCategory) == type)
+            {
+                obj = Db.ForumCategories.Find(id);
+                ViewBag.Item = "Category";
+            }
+            else if (typeof(ForumPost) == type)
+            {
+                obj = Db.ForumPosts.Find(id);
+                ViewBag.Item = "Post";
+            }
+            else if (typeof(ForumComment) == type)
+            {
+                obj = Db.ForumComments.Find(id);
+                ViewBag.Item = "Comment";
+            }
+            else
             {
                 return RedirectToAction("Index", Db.ForumCategories);
             }
-            return View(category);
+
+            /* foreach (PropertyInfo prop in type.GetProperties().Where(i => i.Name == "ID" && Convert.ToInt32(i.GetValue(obj)) == id))
+             {
+
+             }*/
+            
+            return View(obj);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id, string item)
         {
-            ForumCategory category = Db.ForumCategories.Find(id);
+            object obj = default;
+            string page = default;
+            int i = 0;
 
-            if (category != null)
+            Type type = Type.GetType(item);
+
+            if (typeof(ForumCategory) == type)
             {
-                Db.ForumCategories.Remove(category);
-                Db.SaveChanges();
+                Db.ForumCategories.Remove(Db.ForumCategories.Find(id));
+                obj = Db.ForumCategories;
+                
+                page = "Index";
             }
+            else if (typeof(ForumPost) == type)
+            {
 
-            return RedirectToAction("Index", Db.ForumCategories);
+                var d = Db.ForumPosts.Find(id);
+                i = d.ForumCategoryId;
+                Db.ForumPosts.Remove(d);
+                obj = Db.ForumPosts;
+                page = "Posts";
+                
+            }
+            else if (typeof(ForumComment) == type)
+            {
+                var d = Db.ForumComments.Find(id);
+                i = d.ForumPostId;
+                Db.ForumComments.Remove(d);
+                obj = Db.ForumComments;
+                page = "Post";
+            }
+            
+            Db.SaveChanges();
+            
+            return RedirectToAction(page, new { id = i });
         }
 
 

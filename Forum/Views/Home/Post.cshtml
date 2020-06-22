@@ -36,7 +36,7 @@
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
                 </td>
             </tr>
         }
@@ -52,6 +52,6 @@
         <br /><input type="submit" value="Add" />
     }
     <br />
-    @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumCategoryId })
+    @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumPostId })
 </div>
 
