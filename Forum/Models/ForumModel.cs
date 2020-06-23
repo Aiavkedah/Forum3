@@ -6,7 +6,11 @@ using System.Web;
 
 namespace Forum.Models
 {
-    public class ForumCategory : ForumModel
+    public class ForumModel
     {
+        public int ID { get; set; }
+        [Required]
+
+        public string Text { get; set; }
     }
 }

@@ -13,7 +13,7 @@
                 User Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Comment)
+                @Html.DisplayNameFor(model => model.Text)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Date)
@@ -29,13 +29,13 @@
                     @Html.DisplayFor(modelItem => item.ForumUserId)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Comment)
+                    @Html.DisplayFor(modelItem => item.Text)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Date)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
                 </td>
             </tr>
@@ -48,10 +48,10 @@
         @Html.Hidden("ForumUserId", "1")
 
         <br />@Html.Label("Add a comment:")
-        <br />@Html.TextArea("Comment", "")
+        <br />@Html.TextArea("Text", "")
         <br /><input type="submit" value="Add" />
     }
     <br />
-    @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumPostId })
+    @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumCategoryId })
 </div>
 

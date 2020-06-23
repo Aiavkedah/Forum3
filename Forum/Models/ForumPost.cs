@@ -6,14 +6,11 @@ using System.Web;
 
 namespace Forum.Models
 {
-    public class ForumPost
+    public class ForumPost : ForumModel
     {
-        public int ID { get; set; }
         public int ForumUserId { get; set; }
         public int ForumCategoryId { get; set; }
-
-        [Required]
-        public string Title { get; set; }
+        public DateTime Date { get; set; }
 
         //public ForumUser ForumUser { get; set; }
         public ForumCategory ForumCategory { get; set; }

@@ -98,7 +98,7 @@ namespace ForumTest
             ForumCategory category = new ForumCategory { Name = "NewCategory" };
             //ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = 1, Title = "NewPost" };
             //ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = 1, Comment = "NewComment", Date = DateTime.Now };
-            ViewResult result = Controller.Delete(1) as ViewResult;
+            ViewResult result = Controller.Delete(1, category.GetType().ToString()) as ViewResult;
             
             Assert.IsNotNull(result);
             Assert.IsNull(Controller.Db.ForumComments.Find(category.ID));

@@ -14,6 +14,9 @@ namespace Forum.Controllers
     public class HomeController : Controller
     {
         public ForumContext Db = new ForumContext();
+        private string CategoriesPage = "Index";
+        private string PostsPage = "Posts";
+        private string CommentsPage = "Post";
 
         [HttpGet]
         public async Task<ActionResult> Index(int page=1)
@@ -30,9 +33,11 @@ namespace Forum.Controllers
             {
                 Db.ForumCategories.Add(category);
                 Db.SaveChanges();
+
+                return RedirectToAction(PostsPage, new { id = category.ID });
             }
-            
-            return RedirectToAction("Posts", new { id = category.ID });
+            //TODO: validation for empty value
+            return RedirectToAction(CategoriesPage, Db.ForumCategories);
         }
 
         [HttpGet]
@@ -40,12 +45,12 @@ namespace Forum.Controllers
         {
             if (id == null)
             {
-                return RedirectToAction("Index", Db.ForumCategories);
+                return RedirectToAction(CategoriesPage, Db.ForumCategories);
             }
 
-            IEnumerable<ForumPost> posts = Db.ForumPosts.Where(i => i.ForumCategoryId == id).Include(i => i.ForumCategory);
+            IEnumerable<ForumPost> posts = Db.ForumPosts.Where(i => i.ForumCategoryId == id).Include(i => i.ForumCategory).OrderByDescending(i => i.Date);
 
-            ViewBag.PostsCategory = posts.Count() > 0 ? posts.First().ForumCategory.Name : Db.ForumCategories.Where(i => i.ID == id).First().Name;
+            ViewBag.PostsCategory = posts.Count() > 0 ? posts.First().ForumCategory.Text : Db.ForumCategories.Where(i => i.ID == id).First().Text;
             ViewBag.ForumCategoryId = id;
 
             return View(posts);
@@ -56,11 +61,12 @@ namespace Forum.Controllers
         {
             if (ModelState.IsValid)
             {
+                post.Date = DateTime.Now;
                 Db.ForumPosts.Add(post);
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Post", new { id = post.ID });
+            return RedirectToAction(CommentsPage, new { id = post.ID });
         }
         
         [HttpGet]
@@ -68,15 +74,15 @@ namespace Forum.Controllers
         {
             if (id == null)
             {
-                return RedirectToAction("Index", Db.ForumCategories);
+                return RedirectToAction(CategoriesPage, Db.ForumCategories);
             }
 
-            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == id).Include(i => i.ForumPost);
+            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == id).Include(i => i.ForumPost).OrderByDescending(i => i.Date);
 
             var post = comments.Count() > 0 ? comments.First().ForumPost : Db.ForumPosts.Where(i => i.ID == id).First();
-            ViewBag.PostTitle = post.Title;
+            ViewBag.PostTitle = post.Text;
             ViewBag.ForumCategoryId = post.ForumCategoryId;
-            ViewBag.ForumPostId = id;
+            ViewBag.ForumPostId = post.ID;
 
             return View(comments);
         }
@@ -84,14 +90,17 @@ namespace Forum.Controllers
         [HttpPost]
         public ActionResult Post(ForumComment newComment)
         {
-            newComment.Date = DateTime.Now;
+            if (ModelState.IsValid)
+            {
+                newComment.Date = DateTime.Now;
+                Db.ForumComments.Add(newComment);
+                Db.SaveChanges();
+            }
 
-            Db.ForumComments.Add(newComment);
-            Db.SaveChanges();
-
-            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId);
-            //ViewBag.ForumComment = comments;
+            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId).Include(i => i.ForumPost);
             ViewBag.PostId = newComment.ForumPostId;
+            ViewBag.ForumCategoryId = comments.First().ForumPost.ForumCategoryId;
+
             return View(comments);
         }
 
@@ -118,7 +127,7 @@ namespace Forum.Controllers
             }
             else
             {
-                return RedirectToAction("Index", Db.ForumCategories);
+                return RedirectToAction(CategoriesPage, Db.ForumCategories);
             }
 
             /* foreach (PropertyInfo prop in type.GetProperties().Where(i => i.Name == "ID" && Convert.ToInt32(i.GetValue(obj)) == id))
@@ -133,71 +142,113 @@ namespace Forum.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id, string item)
         {
-            object obj = default;
             string page = default;
-            int i = 0;
+            int itemId = 0;
 
             Type type = Type.GetType(item);
 
             if (typeof(ForumCategory) == type)
             {
                 Db.ForumCategories.Remove(Db.ForumCategories.Find(id));
-                obj = Db.ForumCategories;
-                
-                page = "Index";
+                page = CategoriesPage;
             }
             else if (typeof(ForumPost) == type)
             {
-
-                var d = Db.ForumPosts.Find(id);
-                i = d.ForumCategoryId;
-                Db.ForumPosts.Remove(d);
-                obj = Db.ForumPosts;
-                page = "Posts";
-                
+                var post = Db.ForumPosts.Find(id);
+                itemId = post.ForumCategoryId;
+                Db.ForumPosts.Remove(post);
+                page = PostsPage;
             }
             else if (typeof(ForumComment) == type)
             {
-                var d = Db.ForumComments.Find(id);
-                i = d.ForumPostId;
-                Db.ForumComments.Remove(d);
-                obj = Db.ForumComments;
-                page = "Post";
+                var comment = Db.ForumComments.Find(id);
+                itemId = comment.ForumPostId;
+                Db.ForumComments.Remove(comment);
+                page = CommentsPage;
             }
             
             Db.SaveChanges();
             
-            return RedirectToAction(page, new { id = i });
+            return RedirectToAction(page, new { id = itemId });
         }
 
 
-        public ActionResult Edit(int? id, int page=1)
+        public ActionResult Edit(int? id, string item, int page=1)
         {
-            if (id != null)
-            {
-                ForumCategory category = Db.ForumCategories.Find(id);
+            object obj;
 
-                if (category != null)
-                {
-                    return PartialView("Edit", category);
-                }
+            Type type = Type.GetType(item);
+
+            if (typeof(ForumCategory) == type)
+            {
+                obj = Db.ForumCategories.Find(id);
+                ViewBag.Item = "Category";
             }
-            return RedirectToAction("Index", Db.ForumCategories);
+            else if (typeof(ForumPost) == type)
+            {
+                obj = Db.ForumPosts.Find(id);
+                ViewBag.Item = "Post";
+            }
+            else if (typeof(ForumComment) == type)
+            {
+                obj = Db.ForumComments.Find(id);
+                ViewBag.Item = "Comment";
+            }
+            else
+            {
+                return RedirectToAction(CategoriesPage, Db.ForumCategories);
+            }
+
+            return View("Edit", obj);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(ForumCategory category, int page)
+        public ActionResult Edit(ForumModel model, string item)
         {
+            object obj;
+            string page = default;
+            int itemId = 0;
+            Type type = Type.GetType(item);
+
             if (ModelState.IsValid)
             {
-                Db.Entry(category).State = EntityState.Modified;
+                if (typeof(ForumCategory) == type)
+                {
+                    ForumCategory category = Db.ForumCategories.Find(model.ID);
+                    category.Text = model.Text;
+                    obj = category;
+                    page = CategoriesPage;
+                }
+                else if (typeof(ForumPost) == type)
+                {
+                    ForumPost post = Db.ForumPosts.Find(model.ID);
+                    post.Text = model.Text;
+                    obj = post;
+                    itemId = post.ForumCategoryId;
+                    page = PostsPage;
+                }
+                else if (typeof(ForumComment) == type)
+                {
+                    ForumComment comment = Db.ForumComments.Find(model.ID);
+                    comment.Text = model.Text;
+                    obj = comment;
+                    itemId = comment.ForumPostId;
+                    page = CommentsPage;
+                }
+                else
+                {
+                    obj = default;
+                }
+
+            
+                Db.Entry(obj).State = EntityState.Modified;
                 Db.SaveChanges();
               
-                return RedirectToAction("Index", new { page = page });
+                return RedirectToAction(page, new { id = itemId });
             }
 
-            return PartialView("Edit", category);
+            return View("Edit", model);
         }
     }
 }

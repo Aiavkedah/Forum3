@@ -1,4 +1,4 @@
-﻿@model Forum.Models.ForumCategory
+﻿@model Forum.Models.ForumModel
 
 <div>
     @using (Html.BeginForm())
@@ -8,8 +8,8 @@
         @Html.HiddenFor(model => model.ID)
 
         <div>
-            @Html.EditorFor(model => model.Name)
-            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.Text)
+            @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
         </div>
 
         <div>
