@@ -175,6 +175,11 @@ namespace Forum.Controllers
 
         public ActionResult Edit(int? id, string item, int page=1)
         {
+            if (item == null)
+            {
+                return RedirectToAction(CategoriesPage, Db.ForumCategories);
+            }
+
             object obj;
 
             Type type = Type.GetType(item);
