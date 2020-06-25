@@ -8,10 +8,13 @@
         <table class="table">
             <tr>
                 <th>
-                    User Name
+                    @Html.DisplayNameFor(model => model.Text)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Text)
+                    @Html.DisplayNameFor(model => model.ForumUserId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
                 </th>
                 <th></th>
             </tr>
@@ -20,32 +23,46 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ForumUserId)
+                        @Html.ActionLink(Convert.ToString(@Html.DisplayFor(modelItem => item.Text)), "Comments", new { id = item.ID })
                     </td>
                     <td>
-                        @Html.ActionLink(Convert.ToString(@Html.DisplayFor(modelItem => item.Text)), "Post", new { id = item.ID })
+                        @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                    @if (User.IsInRole("admin") || item.ForumUserId == @ViewBag.User)
+                    {
+                        <div>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                        </div>
+                    }
                     </td>
                 </tr>
             }
 
         </table>
 
-
-
         @using (Html.BeginForm())
         {
-            @Html.Hidden("ForumCategoryId", @ViewBag.ForumCategoryId as string)
-            @Html.Hidden("ForumUserId", "1")
-            <br />@Html.Label("Add new post:")
-            <br />@Html.Label("Add title:")
-            <br />@Html.TextBox("Text", "")
-            @Html.ValidationMessage("Text")
-            <br /><input type="submit" value="Add" />
+            if (User.Identity.IsAuthenticated)
+            {
+                @Html.Hidden("ForumCategoryId", @ViewBag.ForumCategoryId as string)
+                @Html.Hidden("ForumUserId", @ViewBag.User as string)
+                <br />@Html.Label("Add new post (title):")
+                <br />@Html.TextBox("Text", "")
+                @Html.ValidationMessage("Text")
+                <br /><input type="submit" value="Add" />
+            }
+            else
+            {
+                <div>
+                    Please @Html.ActionLink("Log in", "Login", "Account") for adding new post
+                </div>
+            }
         }
-        <br />
-        @Html.ActionLink("Back to Categories", "Index", new { id = 1 })
-    </div>
+    <br />
+    @Html.ActionLink("Back to Categories", "Index", new { id = 1 })
+</div>

@@ -188,27 +188,26 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202006090528575_InitialCreate.cs" />
-    <Compile Include="Migrations\202006090528575_InitialCreate.Designer.cs">
-      <DependentUpon>202006090528575_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202006220649285_InitialCreate.cs" />
+    <Compile Include="Migrations\202006220649285_InitialCreate.Designer.cs">
+      <DependentUpon>202006220649285_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202006231036576_MigrateDB.cs" />
-    <Compile Include="Migrations\202006231036576_MigrateDB.Designer.cs">
-      <DependentUpon>202006231036576_MigrateDB.cs</DependentUpon>
+    <Compile Include="Migrations\202006251516321_MigrateDB.cs" />
+    <Compile Include="Migrations\202006251516321_MigrateDB.Designer.cs">
+      <DependentUpon>202006251516321_MigrateDB.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202006231235563_MigrateDB1.cs" />
-    <Compile Include="Migrations\202006231235563_MigrateDB1.Designer.cs">
-      <DependentUpon>202006231235563_MigrateDB1.cs</DependentUpon>
+    <Compile Include="Migrations\202006251522100_MigrateDB1.cs" />
+    <Compile Include="Migrations\202006251522100_MigrateDB1.Designer.cs">
+      <DependentUpon>202006251522100_MigrateDB1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202006231239564_MigrateDB2.cs" />
-    <Compile Include="Migrations\202006231239564_MigrateDB2.Designer.cs">
-      <DependentUpon>202006231239564_MigrateDB2.cs</DependentUpon>
+    <Compile Include="Migrations\202006251536200_MigrateDB2.cs" />
+    <Compile Include="Migrations\202006251536200_MigrateDB2.Designer.cs">
+      <DependentUpon>202006251536200_MigrateDB2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ForumCategory.cs" />
     <Compile Include="Models\ForumComment.cs" />
-    <Compile Include="Models\ForumContext.cs" />
     <Compile Include="Models\ForumPost.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ForumModel.cs" />
@@ -276,7 +275,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Posts.cshtml" />
-    <Content Include="Views\Home\Post.cshtml" />
+    <Content Include="Views\Home\Comments.cshtml" />
     <Content Include="Views\Home\Delete.cshtml" />
     <Content Include="Views\Home\Edit.cshtml" />
   </ItemGroup>
@@ -297,17 +296,17 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202006090528575_InitialCreate.resx">
-      <DependentUpon>202006090528575_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202006220649285_InitialCreate.resx">
+      <DependentUpon>202006220649285_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202006231036576_MigrateDB.resx">
-      <DependentUpon>202006231036576_MigrateDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202006251516321_MigrateDB.resx">
+      <DependentUpon>202006251516321_MigrateDB.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202006231235563_MigrateDB1.resx">
-      <DependentUpon>202006231235563_MigrateDB1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202006251522100_MigrateDB1.resx">
+      <DependentUpon>202006251522100_MigrateDB1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202006231239564_MigrateDB2.resx">
-      <DependentUpon>202006231239564_MigrateDB2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202006251536200_MigrateDB2.resx">
+      <DependentUpon>202006251536200_MigrateDB2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

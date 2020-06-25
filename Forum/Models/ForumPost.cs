@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Forum.Models
 {
     public class ForumPost : ForumModel
     {
-        public int ForumUserId { get; set; }
+        [Display(Name = "User Name")]
+        public string ForumUserId { get; set; }
         public int ForumCategoryId { get; set; }
         public DateTime Date { get; set; }
 
-        //public ForumUser ForumUser { get; set; }
         public ForumCategory ForumCategory { get; set; }
+        [ForeignKey("ForumUserId")]
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }

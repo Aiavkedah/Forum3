@@ -3,7 +3,7 @@ namespace Forum.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialCreate : DbMigration
+    public partial class MigrateDB : DbMigration
     {
         public override void Up()
         {
@@ -12,7 +12,7 @@ namespace Forum.Migrations
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
+                        Text = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.ID);
             
@@ -21,10 +21,10 @@ namespace Forum.Migrations
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
-                        ForumUserId = c.Int(nullable: false),
+                        ForumUserId = c.String(),
                         ForumPostId = c.Int(nullable: false),
-                        Comment = c.String(),
                         Date = c.DateTime(nullable: false),
+                        Text = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.ForumPosts", t => t.ForumPostId, cascadeDelete: true)
@@ -35,9 +35,10 @@ namespace Forum.Migrations
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
-                        ForumUserId = c.Int(nullable: false),
+                        ForumUserId = c.String(),
                         ForumCategoryId = c.Int(nullable: false),
-                        Title = c.String(nullable: false),
+                        Date = c.DateTime(nullable: false),
+                        Text = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.ForumCategories", t => t.ForumCategoryId, cascadeDelete: true)

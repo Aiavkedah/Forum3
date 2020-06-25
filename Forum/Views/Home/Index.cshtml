@@ -7,11 +7,22 @@
 }
 
 <div class="jumbotron">
+    @using (Html.BeginForm())
+    {
+        if (User.IsInRole("admin"))
+        {
+            <br />@Html.Label("Add new category")
+            <br />@Html.TextBox("Text")
+            @Html.ValidationMessage("Text")
+            <br /><input type="submit" value="Add" />
+        }
+    }
+    <br />
+
     <table class="table">
         <tr>
             <th>
                 Categories
-
             </th>
         </tr>
 
@@ -24,22 +35,18 @@
                     </div>
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.PageNumber }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                    @if (User.IsInRole("admin"))
+                    {
+                    <div>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.PageNumber }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                    </div>
+                    }
                 </td>
             </tr>
         }
     </table>
 
-
-    @using (Html.BeginForm())
-    {
-        <br />@Html.Label("Add new category")
-        <br />@Html.TextBox("Text")
-        @Html.ValidationMessage("Text")
-        <br /><input type="submit" value="Add" />
-    }
-    <br />
     @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
 
     @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))

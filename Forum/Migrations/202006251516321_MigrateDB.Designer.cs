@@ -13,7 +13,7 @@ namespace Forum.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202006231036576_MigrateDB"; }
+            get { return "202006251516321_MigrateDB"; }
         }
         
         string IMigrationMetadata.Source

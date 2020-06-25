@@ -1,4 +1,5 @@
 ﻿using Forum.Models;
+using Microsoft.AspNet.Identity;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,10 @@ namespace Forum.Controllers
 {
     public class HomeController : Controller
     {
-        public ForumContext Db = new ForumContext();
+        public ApplicationDbContext Db = new ApplicationDbContext();
         private string CategoriesPage = "Index";
         private string PostsPage = "Posts";
-        private string CommentsPage = "Post";
+        private string CommentsPage = "Comments";
 
         [HttpGet]
         public async Task<ActionResult> Index(int page=1)
@@ -48,19 +49,22 @@ namespace Forum.Controllers
                 return RedirectToAction(CategoriesPage, Db.ForumCategories);
             }
 
-            IEnumerable<ForumPost> posts = Db.ForumPosts.Where(i => i.ForumCategoryId == id).Include(i => i.ForumCategory).OrderByDescending(i => i.Date);
+            IEnumerable<ForumPost> posts = Db.ForumPosts.Where(i => i.ForumCategoryId == id).Include(i => i.ForumCategory).Include(i => i.ApplicationUser).OrderByDescending(i => i.Date);
 
             ViewBag.PostsCategory = posts.Count() > 0 ? posts.First().ForumCategory.Text : Db.ForumCategories.Where(i => i.ID == id).First().Text;
             ViewBag.ForumCategoryId = id;
+            ViewBag.User = User.Identity.GetUserId();
 
             return View(posts);
         }
+
 
         [HttpPost]
         public ActionResult Posts(ForumPost post)
         {
             if (ModelState.IsValid)
             {
+                post.ForumUserId = User.Identity.GetUserId();
                 post.Date = DateTime.Now;
                 Db.ForumPosts.Add(post);
                 Db.SaveChanges();
@@ -70,25 +74,26 @@ namespace Forum.Controllers
         }
         
         [HttpGet]
-        public ActionResult Post(int? id)
+        public ActionResult Comments(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(CategoriesPage, Db.ForumCategories);
             }
 
-            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == id).Include(i => i.ForumPost).OrderByDescending(i => i.Date);
+            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == id).Include(i => i.ForumPost).Include(i => i.ApplicationUser).OrderByDescending(i => i.Date);
 
             var post = comments.Count() > 0 ? comments.First().ForumPost : Db.ForumPosts.Where(i => i.ID == id).First();
             ViewBag.PostTitle = post.Text;
             ViewBag.ForumCategoryId = post.ForumCategoryId;
             ViewBag.ForumPostId = post.ID;
+            ViewBag.User = User.Identity.GetUserId();
 
             return View(comments);
         }
 
         [HttpPost]
-        public ActionResult Post(ForumComment newComment)
+        public ActionResult Comments(ForumComment newComment)
         {
             if (ModelState.IsValid)
             {
@@ -97,9 +102,10 @@ namespace Forum.Controllers
                 Db.SaveChanges();
             }
 
-            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId).Include(i => i.ForumPost);
+            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId).Include(i => i.ForumPost).Include(i => i.ApplicationUser);
             ViewBag.PostId = newComment.ForumPostId;
             ViewBag.ForumCategoryId = comments.First().ForumPost.ForumCategoryId;
+            @ViewBag.User = User.Identity.GetUserId();
 
             return View(comments);
         }
@@ -130,11 +136,6 @@ namespace Forum.Controllers
                 return RedirectToAction(CategoriesPage, Db.ForumCategories);
             }
 
-            /* foreach (PropertyInfo prop in type.GetProperties().Where(i => i.Name == "ID" && Convert.ToInt32(i.GetValue(obj)) == id))
-             {
-
-             }*/
-            
             return View(obj);
         }
 

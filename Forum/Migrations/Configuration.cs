@@ -5,15 +5,15 @@ namespace Forum.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Forum.Models.ForumContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Forum.Models.ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "Forum.Models.ForumContext";
+            ContextKey = "Forum.Models.ApplicationDbContext";
         }
 
-        protected override void Seed(Forum.Models.ForumContext context)
+        protected override void Seed(Forum.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

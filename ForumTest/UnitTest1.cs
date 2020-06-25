@@ -35,13 +35,13 @@ namespace ForumTest
         [TestMethod]
         public void IndexPost()
         {
-            ForumCategory category = new ForumCategory { Name = "NewCategory" };
+            ForumCategory category = new ForumCategory { Text = "NewCategory" };
             RedirectToRouteResult result = Controller.Index(category) as RedirectToRouteResult;
             ForumCategory newCategory = Controller.Db.ForumCategories.Find(category.ID);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(newCategory);
-            Assert.AreEqual(category.Name, newCategory.Name);
+            Assert.AreEqual(category.Text, newCategory.Text);
         }
 
         [TestMethod]
@@ -58,13 +58,13 @@ namespace ForumTest
         [TestMethod]
         public void PostsPost()
         {
-            ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = 1, Title = "NewPost" };
+            ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = 1, Text = "NewPost" };
             RedirectToRouteResult result = Controller.Posts(post) as RedirectToRouteResult;
             ForumPost newPost = Controller.Db.ForumPosts.Find(post.ID);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(newPost);
-            Assert.AreEqual(post.Title, newPost.Title);
+            Assert.AreEqual(post.Text, newPost.Text);
         }
 
         [TestMethod]
@@ -82,20 +82,20 @@ namespace ForumTest
         [TestMethod]
         public void PostPost()
         {
-            ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = 1, Comment = "NewComment", Date = DateTime.Now };
+            ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = 1, Text = "NewComment", Date = DateTime.Now };
             ViewResult result = Controller.Post(comment) as ViewResult;
             ForumComment newComment = Controller.Db.ForumComments.Find(comment.ID);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(newComment);
-            Assert.AreEqual(comment.Comment, newComment.Comment);
+            Assert.AreEqual(comment.Text, newComment.Text);
             Assert.AreEqual(comment.ForumPostId, result.ViewBag.PostId);
         }
 
         [TestMethod]
         public void Delete()
         {
-            ForumCategory category = new ForumCategory { Name = "NewCategory" };
+            ForumCategory category = new ForumCategory { Text = "NewCategory" };
             //ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = 1, Title = "NewPost" };
             //ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = 1, Comment = "NewComment", Date = DateTime.Now };
             ViewResult result = Controller.Delete(1, category.GetType().ToString()) as ViewResult;

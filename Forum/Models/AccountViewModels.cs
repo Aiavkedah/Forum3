@@ -48,10 +48,10 @@ namespace Forum.Models
 
     public class LoginViewModel
     {
-        [Required]
+        /*[Required]
         [Display(Name = "Email")]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; }*/
 
         [Required]
         [DataType(DataType.Password)]
@@ -60,6 +60,10 @@ namespace Forum.Models
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+
+        [Required]
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
     }
 
     public class RegisterViewModel
@@ -79,6 +83,10 @@ namespace Forum.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
     }
 
     public class ResetPasswordViewModel

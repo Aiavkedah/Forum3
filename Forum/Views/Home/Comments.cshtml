@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Forum.Models.ForumComment>
+
+@{
+    ViewBag.Title = @ViewBag.PostTitle;
+}
+
+    <div class="jumbotron">
+        <h3>@ViewBag.PostTitle</h3>
+
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Text)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ForumUserId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th></th>
+            </tr>
+
+
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+
+                @if (User.IsInRole("admin") || item.ForumUserId == @ViewBag.User)
+                {
+                    <div>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                    </div>
+                }
+            </td>
+        </tr>
+            }
+        </table>
+
+        @using (Html.BeginForm())
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                @Html.Hidden("ForumPostId", @ViewBag.ForumPostId as string)
+                @Html.Hidden("ForumUserId", @ViewBag.User as string)
+
+                <br />@Html.Label("Add a comment:")
+                <br />@Html.TextArea("Text", "")
+                <br /><input type="submit" value="Add" />
+            }
+            else
+            {
+                <div>
+                    Please @Html.ActionLink("Log in", "Login", "Account") for adding new comment
+                </div>
+            }
+        }
+        <br />
+        @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumCategoryId })
+    </div>
+
