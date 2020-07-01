@@ -18,13 +18,13 @@ namespace Forum.Controllers
         private string CategoriesPage = "Index";
         private string PostsPage = "Posts";
         private string CommentsPage = "Comments";
+        int PageSize = 5;
 
         [HttpGet]
         public async Task<ActionResult> Index(int page=1)
         {
-            int pageSize = 5;
             var categories = await Db.ForumCategories.ToListAsync();
-            return View(categories.ToPagedList(page, pageSize));
+            return View(categories.ToPagedList(page, PageSize));
         }
 
         [HttpPost]
@@ -37,12 +37,12 @@ namespace Forum.Controllers
 
                 return RedirectToAction(PostsPage, new { id = category.ID });
             }
-            //TODO: validation for empty value
+           
             return RedirectToAction(CategoriesPage, Db.ForumCategories);
         }
 
         [HttpGet]
-        public ActionResult Posts(int? id)
+        public ActionResult Posts(int? id, int page = 1)
         {
             if (id == null)
             {
@@ -55,7 +55,7 @@ namespace Forum.Controllers
             ViewBag.ForumCategoryId = id;
             ViewBag.User = User.Identity.GetUserId();
 
-            return View(posts);
+            return View(posts.ToPagedList(page, PageSize));
         }
 
 
@@ -68,13 +68,15 @@ namespace Forum.Controllers
                 post.Date = DateTime.Now;
                 Db.ForumPosts.Add(post);
                 Db.SaveChanges();
+
+                return RedirectToAction(CommentsPage, new { id = post.ID });
             }
 
-            return RedirectToAction(CommentsPage, new { id = post.ID });
+            return RedirectToAction(CategoriesPage, Db.ForumCategories);
         }
         
         [HttpGet]
-        public ActionResult Comments(int? id)
+        public ActionResult Comments(int? id, int page = 1)
         {
             if (id == null)
             {
@@ -89,7 +91,7 @@ namespace Forum.Controllers
             ViewBag.ForumPostId = post.ID;
             ViewBag.User = User.Identity.GetUserId();
 
-            return View(comments);
+            return View(comments.ToPagedList(page, PageSize));
         }
 
         [HttpPost]
@@ -105,9 +107,9 @@ namespace Forum.Controllers
             IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId).Include(i => i.ForumPost).Include(i => i.ApplicationUser);
             ViewBag.PostId = newComment.ForumPostId;
             ViewBag.ForumCategoryId = comments.First().ForumPost.ForumCategoryId;
-            @ViewBag.User = User.Identity.GetUserId();
+            ViewBag.User = User.Identity.GetUserId();
 
-            return View(comments);
+            return View(comments.ToPagedList(1, PageSize));
         }
 
         public ActionResult Delete(int id, string item)

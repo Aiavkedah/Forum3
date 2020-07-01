@@ -10,6 +10,6 @@ namespace Forum.Models
     {
         public int ID { get; set; }
         [Required]
-        public string Text { get; set; }
+        public virtual string Text { get; set; }
     }
 }
