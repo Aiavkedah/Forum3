@@ -191,6 +191,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DbInitializer.cs" />
     <Compile Include="Models\ForumCategory.cs" />
+    <Compile Include="Models\ForumCategoryViewModel.cs" />
     <Compile Include="Models\ForumComment.cs" />
     <Compile Include="Models\ForumPost.cs" />
     <Compile Include="Models\IdentityModels.cs" />

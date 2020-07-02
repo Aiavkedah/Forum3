@@ -1,4 +1,5 @@
-﻿@model PagedList.IPagedList<Forum.Models.ForumCategory>
+﻿@model Forum.Models.ForumCategoryViewModel
+@using PagedList;
 @using PagedList.Mvc;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
@@ -13,7 +14,7 @@
         {
             <div class="input-group mb-3">
                 @Html.ValidationSummary("", new { @class = "text-danger" })
-                @Html.TextBoxFor(model => model.FirstOrDefault().Text, new { @Value = "", maxlength = 100, placeholder = "New category", @class = "form-control" })
+                @Html.TextBoxFor(model => model.Categories.FirstOrDefault().Text, new { @Value = "", maxlength = 100, placeholder = "New category", @class = "form-control" })
                 <input class="btn btn-outline-secondary" type="submit" value="Add" />
             </div>
         }
@@ -27,19 +28,22 @@
             </th>
         </tr>
 
-        @foreach (var item in Model)
+        @foreach (var item in Model.Categories)
         {
             <tr>
                 <td>
                     <div>
                         @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Text)), "Posts", new { id = item.ID })
                     </div>
+                    <div>
+                        @Model.Posts.Where(i => i.ForumCategoryId == item.ID).Count()
+                    </div>
                 </td>
                 <td>
                     @if (User.IsInRole("admin"))
                     {
                         <div>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.PageNumber }) |
+                            @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.Categories.PageNumber }) |
                             @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
                         </div>
                     }
@@ -48,7 +52,7 @@
         }
     </table>
 
-    @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+    @(Model.Categories.PageCount < Model.Categories.PageNumber ? 0 : Model.Categories.PageNumber) из @Model.Categories.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    @Html.PagedListPager(Model.Categories, page => Url.Action("Index", new { page }))
 </div>

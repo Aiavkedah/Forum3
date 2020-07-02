@@ -23,8 +23,18 @@ namespace Forum.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(int page=1)
         {
+            
             var categories = await Db.ForumCategories.ToListAsync();
-            return View(categories.ToPagedList(page, PageSize));
+            var posts = Db.ForumPosts.ToList();
+
+            
+
+            ForumCategoryViewModel view = new ForumCategoryViewModel
+            {
+                Categories = categories.ToPagedList(page, PageSize),
+                Posts = posts
+            };
+            return View(view);
         }
 
         [HttpPost]
