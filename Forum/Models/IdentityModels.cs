@@ -25,6 +25,7 @@ namespace Forum.Models
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
+            Database.SetInitializer(new DbInitializer());
         }
 
         public DbSet<ForumPost> ForumPosts { get; set; }
@@ -34,17 +35,6 @@ namespace Forum.Models
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
-        }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            /*modelBuilder.Entity<ForumPost>()
-                .HasRequired(c => c.ApplicationUser)
-                .WithMany(t => t.ForumPosts)
-                .Map(m => m.MapKey("ForumUserId"));*/
-
         }
     }
 }

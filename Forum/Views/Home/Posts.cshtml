@@ -10,7 +10,6 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().Text)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FirstOrDefault().ForumUserId)
@@ -63,7 +62,7 @@
         else
         {
             <div>
-                Please @Html.ActionLink("Log in", "Login", "Account") for adding new post
+                Please @Html.ActionLink("Log in", "Login", "Account", new { returnURL = "/Home/Posts/" + @ViewBag.ForumCategoryId }, null) for adding new post
             </div>
         }
     }

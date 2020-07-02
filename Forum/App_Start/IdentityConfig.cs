@@ -23,17 +23,20 @@ namespace Forum
             var from = "";
             var pass = "";
 
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+            {
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new System.Net.NetworkCredential(from, pass),
+                EnableSsl = true
+            };
 
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = false;
-            client.Credentials = new System.Net.NetworkCredential(from, pass);
-            client.EnableSsl = true;
-
-            var mail = new MailMessage(from, message.Destination);
-            mail.Subject = message.Subject;
-            mail.Body = message.Body;
-            mail.IsBodyHtml = true;
+            var mail = new MailMessage(from, message.Destination)
+            {
+                Subject = message.Subject,
+                Body = message.Body,
+                IsBodyHtml = true
+            };
 
             return client.SendMailAsync(mail);
         }
