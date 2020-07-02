@@ -11,12 +11,11 @@
     {
         if (User.IsInRole("admin"))
         {
-            @Html.Label("Add new category:")
-            <br />
-            @Html.TextBoxFor(model => model.FirstOrDefault().Text, new { @Value = "", maxlength = 100})
-            @Html.ValidationMessage("Text", new { @class = "text-danger" })
-            <br />
-            <input type="submit" class="btn btn-default" value="Add" />
+            <div class="input-group mb-3">
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.FirstOrDefault().Text, new { @Value = "", maxlength = 100, placeholder = "New category", @class = "form-control" })
+                <input class="btn btn-outline-secondary" type="submit" value="Add" />
+            </div>
         }
     }
     <br />

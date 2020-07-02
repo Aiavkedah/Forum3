@@ -56,13 +56,8 @@
         {
             @Html.Hidden("ForumPostId", @ViewBag.ForumPostId as string)
             @Html.Hidden("ForumUserId", @ViewBag.User as string)
-
-            <br />
-            @Html.Label("Add a comment:")
-            <br />
-            @Html.TextAreaFor(model => model.FirstOrDefault().Text, new { value = "", style = "width: 100%; max-width: 100%;" })
-            <br />
-            <input type="submit" class="btn btn-default" value="Add" />
+            @Html.TextAreaFor(model => model.FirstOrDefault().Text, new { value = "", placeholder = "New comment", @class = "form-control", style = "width: 100%; max-width: 100%;" })
+            <input type="submit" class="btn btn-outline-secondary" value="Add" />
         }
         else
         {
@@ -77,5 +72,11 @@
     @Html.PagedListPager(Model, page => Url.Action("Comments", new { page }))
 
     @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumCategoryId })
+
+    <script type="text/javascript">
+        $(function () {
+            $("#Text").html("");
+        });
+    </script>
 </div>
 

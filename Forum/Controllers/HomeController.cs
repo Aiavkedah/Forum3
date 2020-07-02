@@ -72,7 +72,7 @@ namespace Forum.Controllers
                 return RedirectToAction(CommentsPage, new { id = post.ID });
             }
 
-            return RedirectToAction(CategoriesPage, Db.ForumCategories);
+            return RedirectToAction(PostsPage, Db.ForumPosts);
         }
         
         [HttpGet]
@@ -104,7 +104,7 @@ namespace Forum.Controllers
                 Db.SaveChanges();
             }
 
-            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId).Include(i => i.ForumPost).Include(i => i.ApplicationUser);
+            IEnumerable<ForumComment> comments = Db.ForumComments.Where(i => i.ForumPostId == newComment.ForumPostId).Include(i => i.ForumPost).Include(i => i.ApplicationUser).OrderByDescending(i => i.Date);
             ViewBag.PostId = newComment.ForumPostId;
             ViewBag.ForumCategoryId = comments.First().ForumPost.ForumCategoryId;
             ViewBag.User = User.Identity.GetUserId();
