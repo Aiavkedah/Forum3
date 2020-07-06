@@ -23,11 +23,8 @@ namespace Forum.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(int page=1)
         {
-            
             var categories = await Db.ForumCategories.ToListAsync();
             var posts = Db.ForumPosts.ToList();
-
-            
 
             ForumCategoryViewModel view = new ForumCategoryViewModel
             {
@@ -185,7 +182,6 @@ namespace Forum.Controllers
             return RedirectToAction(page, new { id = itemId });
         }
 
-
         public ActionResult Edit(int? id, string item, int page=1)
         {
             if (item == null)
@@ -259,7 +255,6 @@ namespace Forum.Controllers
                     obj = default;
                 }
 
-            
                 Db.Entry(obj).State = EntityState.Modified;
                 Db.SaveChanges();
               

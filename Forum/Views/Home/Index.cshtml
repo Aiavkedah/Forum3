@@ -26,29 +26,34 @@
             <th>
                 Categories
             </th>
+            <th>
+                Discussions
+            </th>
         </tr>
 
         @foreach (var item in Model.Categories)
         {
-            <tr>
-                <td>
-                    <div>
-                        @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Text)), "Posts", new { id = item.ID })
-                    </div>
-                    <div>
-                        @Model.Posts.Where(i => i.ForumCategoryId == item.ID).Count()
-                    </div>
-                </td>
-                <td>
-                    @if (User.IsInRole("admin"))
-                    {
-                        <div>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.Categories.PageNumber }) |
-                            @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
-                        </div>
-                    }
-                </td>
-            </tr>
+    <tr>
+        <td>
+            <div>
+                @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Text)), "Posts", new { id = item.ID })
+            </div>
+        </td>
+        <td>
+            <div>
+                @Model.Posts.Where(i => i.ForumCategoryId == item.ID).Count()
+            </div>
+        </td>
+        <td>
+            @if (User.IsInRole("admin"))
+            {
+                <div>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.Categories.PageNumber }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                </div>
+            }
+        </td>
+    </tr>
         }
     </table>
 
