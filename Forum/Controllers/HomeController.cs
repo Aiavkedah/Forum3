@@ -15,15 +15,15 @@ namespace Forum.Controllers
     public class HomeController : Controller
     {
         public ApplicationDbContext Db = new ApplicationDbContext();
-        private string CategoriesPage = "Index";
-        private string PostsPage = "Posts";
-        private string CommentsPage = "Comments";
-        int PageSize = 5;
+        private readonly string CategoriesPage = "Index";
+        private readonly string PostsPage = "Posts";
+        private readonly string CommentsPage = "Comments";
+        private readonly int PageSize = 5;
 
         [HttpGet]
-        public async Task<ActionResult> Index(int page=1)
+        public ActionResult Index(int page=1)
         {
-            var categories = await Db.ForumCategories.ToListAsync();
+            var categories =  Db.ForumCategories.ToList();
             var posts = Db.ForumPosts.ToList();
 
             ForumCategoryViewModel view = new ForumCategoryViewModel

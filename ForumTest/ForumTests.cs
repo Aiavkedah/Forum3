@@ -2,34 +2,45 @@
 using System.Web.Mvc;
 using Forum.Controllers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Forum.Models;
 using System.Threading.Tasks;
+using Moq;
+using System.Data.Entity;
+using System.Security.Principal;
+using System.Web;
+using System.Security.Claims;
 
 namespace ForumTest
 {
     [TestClass]
-    public class UnitTest1
+    public class ForumTests : Tests
     {
         public HomeController Controller;
-
+        
         [TestInitialize]
         public void TestInitialize()
         {
+            InitData();
+
             Controller = new HomeController
             {
-                Db = InitTests.ForumContext()
+                Db = MockContext.Object
             };
         }
 
         [TestMethod]
-        public async Task IndexGet()
+        public void IndexGet()
         {
-            ViewResult result = await Controller.Index() as ViewResult;
+            ViewResult result = Controller.Index() as ViewResult;
 
             Assert.IsNotNull(result.Model);
+
+            MockContext.Verify(i => i.ForumCategories, Times.Once());
+            MockContext.Verify(i => i.ForumPosts, Times.Once());
+
+            MockCategories.Verify();
         }
 
         [TestMethod]
@@ -37,18 +48,32 @@ namespace ForumTest
         {
             ForumCategory category = new ForumCategory { Text = "NewCategory" };
             RedirectToRouteResult result = Controller.Index(category) as RedirectToRouteResult;
-            ForumCategory newCategory = Controller.Db.ForumCategories.Find(category.ID);
 
             Assert.IsNotNull(result);
-            Assert.IsNotNull(newCategory);
-            Assert.AreEqual(category.Text, newCategory.Text);
+            MockCategories.Verify(i => i.Add(It.IsAny<ForumCategory>()), Times.Once());
+            MockContext.Verify(i => i.SaveChanges(), Times.Once());
         }
 
         [TestMethod]
         public void PostsGet()
         {
-            ViewResult result = Controller.Posts(1) as ViewResult;
+            var identityMock = new Mock<ClaimsIdentity>();
+            identityMock.Setup(p => p.FindFirst(It.IsAny<string>())).Returns(new Claim("foo", "1"));
 
+            var userMock = new Mock<IPrincipal>();
+            userMock.SetupGet(p => p.Identity).Returns(identityMock.Object);
+
+            var contextMock = new Mock<HttpContextBase>();
+            contextMock.SetupGet(ctx => ctx.User)
+                       .Returns(userMock.Object);
+
+            var controllerContextMock = new Mock<ControllerContext>();
+            controllerContextMock.SetupGet(con => con.HttpContext)
+                                 .Returns(contextMock.Object);
+
+            Controller.ControllerContext = controllerContextMock.Object;
+            ViewResult result = Controller.Posts(1) as ViewResult;
+            
             Assert.IsNotNull(result);
             Assert.AreEqual("Category1", result.ViewBag.PostsCategory);
             Assert.AreEqual(1, result.ViewBag.ForumCategoryId);
@@ -58,7 +83,7 @@ namespace ForumTest
         [TestMethod]
         public void PostsPost()
         {
-            ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = 1, Text = "NewPost" };
+            ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = "1", Text = "NewPost" };
             RedirectToRouteResult result = Controller.Posts(post) as RedirectToRouteResult;
             ForumPost newPost = Controller.Db.ForumPosts.Find(post.ID);
 
@@ -70,7 +95,7 @@ namespace ForumTest
         [TestMethod]
         public void PostGet()
         {
-            ViewResult result = Controller.Post(1) as ViewResult;
+            ViewResult result = Controller.Comments(1) as ViewResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Title Forum1 Category1", result.ViewBag.PostTitle);
@@ -82,8 +107,8 @@ namespace ForumTest
         [TestMethod]
         public void PostPost()
         {
-            ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = 1, Text = "NewComment", Date = DateTime.Now };
-            ViewResult result = Controller.Post(comment) as ViewResult;
+            ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = "1", Text = "NewComment", Date = DateTime.Now };
+            ViewResult result = Controller.Comments(comment) as ViewResult;
             ForumComment newComment = Controller.Db.ForumComments.Find(comment.ID);
 
             Assert.IsNotNull(result);

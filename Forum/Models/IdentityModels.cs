@@ -28,9 +28,9 @@ namespace Forum.Models
             Database.SetInitializer(new DbInitializer());
         }
 
-        public DbSet<ForumPost> ForumPosts { get; set; }
-        public DbSet<ForumComment> ForumComments { get; set; }
-        public DbSet<ForumCategory> ForumCategories { get; set; }
+        public virtual DbSet<ForumPost> ForumPosts { get; set; }
+        public virtual DbSet<ForumComment> ForumComments { get; set; }
+        public virtual DbSet<ForumCategory> ForumCategories { get; set; }
 
         public static ApplicationDbContext Create()
         {
