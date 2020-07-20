@@ -19,7 +19,7 @@ namespace Forum
     {
         public Task SendAsync(IdentityMessage message)
         {
-            //TODO enter test email and password
+            //TODO enter test email and password for new user email confirmation
             var from = "";
             var pass = "";
 

@@ -2,15 +2,8 @@
 using System.Web.Mvc;
 using Forum.Controllers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
 using Forum.Models;
-using System.Threading.Tasks;
 using Moq;
-using System.Data.Entity;
-using System.Security.Principal;
-using System.Web;
-using System.Security.Claims;
 
 namespace ForumTest
 {
@@ -26,7 +19,8 @@ namespace ForumTest
 
             Controller = new HomeController
             {
-                Db = MockContext.Object
+                Db = MockContext.Object,
+                ControllerContext = ControllerContextMock.Object
             };
         }
 
@@ -39,8 +33,6 @@ namespace ForumTest
 
             MockContext.Verify(i => i.ForumCategories, Times.Once());
             MockContext.Verify(i => i.ForumPosts, Times.Once());
-
-            MockCategories.Verify();
         }
 
         [TestMethod]
@@ -55,23 +47,8 @@ namespace ForumTest
         }
 
         [TestMethod]
-        public void PostsGet()
+        public void PostGet()
         {
-            var identityMock = new Mock<ClaimsIdentity>();
-            identityMock.Setup(p => p.FindFirst(It.IsAny<string>())).Returns(new Claim("foo", "1"));
-
-            var userMock = new Mock<IPrincipal>();
-            userMock.SetupGet(p => p.Identity).Returns(identityMock.Object);
-
-            var contextMock = new Mock<HttpContextBase>();
-            contextMock.SetupGet(ctx => ctx.User)
-                       .Returns(userMock.Object);
-
-            var controllerContextMock = new Mock<ControllerContext>();
-            controllerContextMock.SetupGet(con => con.HttpContext)
-                                 .Returns(contextMock.Object);
-
-            Controller.ControllerContext = controllerContextMock.Object;
             ViewResult result = Controller.Posts(1) as ViewResult;
             
             Assert.IsNotNull(result);
@@ -79,21 +56,19 @@ namespace ForumTest
             Assert.AreEqual(1, result.ViewBag.ForumCategoryId);
         }
 
-
         [TestMethod]
-        public void PostsPost()
+        public void PostPost()
         {
             ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = "1", Text = "NewPost" };
             RedirectToRouteResult result = Controller.Posts(post) as RedirectToRouteResult;
-            ForumPost newPost = Controller.Db.ForumPosts.Find(post.ID);
 
             Assert.IsNotNull(result);
-            Assert.IsNotNull(newPost);
-            Assert.AreEqual(post.Text, newPost.Text);
+            MockPosts.Verify(i => i.Add(It.IsAny<ForumPost>()), Times.Once());
+            MockContext.Verify(i => i.SaveChanges(), Times.Once());
         }
 
         [TestMethod]
-        public void PostGet()
+        public void CommentGet()
         {
             ViewResult result = Controller.Comments(1) as ViewResult;
 
@@ -105,28 +80,53 @@ namespace ForumTest
 
 
         [TestMethod]
-        public void PostPost()
+        public void CommentPost()
         {
             ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = "1", Text = "NewComment", Date = DateTime.Now };
             ViewResult result = Controller.Comments(comment) as ViewResult;
-            ForumComment newComment = Controller.Db.ForumComments.Find(comment.ID);
 
             Assert.IsNotNull(result);
-            Assert.IsNotNull(newComment);
-            Assert.AreEqual(comment.Text, newComment.Text);
-            Assert.AreEqual(comment.ForumPostId, result.ViewBag.PostId);
+            MockComments.Verify(i => i.Add(It.IsAny<ForumComment>()), Times.Once());
+            MockContext.Verify(i => i.SaveChanges(), Times.Once());
         }
 
         [TestMethod]
-        public void Delete()
+        public void DeleteCategory()
         {
             ForumCategory category = new ForumCategory { Text = "NewCategory" };
-            //ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = 1, Title = "NewPost" };
-            //ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = 1, Comment = "NewComment", Date = DateTime.Now };
             ViewResult result = Controller.Delete(1, category.GetType().ToString()) as ViewResult;
-            
+            var confirmed = Controller.DeleteConfirmed(1, category.GetType().ToString());
+
             Assert.IsNotNull(result);
-            Assert.IsNull(Controller.Db.ForumComments.Find(category.ID));
+            Assert.IsNotNull(confirmed);
+            MockCategories.Verify(i => i.Remove(It.IsAny<ForumCategory>()), Times.Once());
+            MockContext.Verify(i => i.SaveChanges(), Times.Once());
+        }
+
+        [TestMethod]
+        public void DeletePost()
+        {
+            ForumPost post = new ForumPost { ForumCategoryId = 1, ForumUserId = "1", Text = "NewPost" };
+            ViewResult result = Controller.Delete(1, post.GetType().ToString()) as ViewResult;
+            var confirmed = Controller.DeleteConfirmed(1, post.GetType().ToString());
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(confirmed);
+            MockPosts.Verify(i => i.Remove(It.IsAny<ForumPost>()), Times.Once());
+            MockContext.Verify(i => i.SaveChanges(), Times.Once());
+        }
+
+        [TestMethod]
+        public void DeleteComment()
+        {
+            ForumComment comment = new ForumComment { ForumPostId = 1, ForumUserId = "1", Text = "NewComment", Date = DateTime.Now };
+            ViewResult result = Controller.Delete(1, comment.GetType().ToString()) as ViewResult;
+            var confirmed = Controller.DeleteConfirmed(1, comment.GetType().ToString());
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(confirmed);
+            MockComments.Verify(i => i.Remove(It.IsAny<ForumComment>()), Times.Once());
+            MockContext.Verify(i => i.SaveChanges(), Times.Once());
         }
     }
 }
