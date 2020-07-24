@@ -4,22 +4,23 @@
     ViewBag.Title = "Edit";
 }
 
-<div class="jumbotron">
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
+    <div class="jumbotron">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
 
-        @Html.HiddenFor(model => model.ID)
+            @Html.HiddenFor(model => model.ID)
 
-    <div>
-        @Html.Label("Edit:")
-        <br />
-        @Html.EditorFor(model => model.Text)
-        @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
+            <div>
+                <h3>Edit</h3>
+                <br />
+                @Html.TextAreaFor(model => model.Text, new { @class = "form-control", style = "width: 100%; max-width: 100%;" })
+                @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
+            </div>
+
+            <div>
+                <input type="submit" class="btn btn-outline-secondary" value="Save" />
+            </div>
+        }
+
     </div>
-
-        <div>
-            <input type="submit" value="Save" />
-        </div>
-    }
-</div>
