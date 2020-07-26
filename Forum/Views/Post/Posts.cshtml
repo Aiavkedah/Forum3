@@ -1,0 +1,86 @@
+﻿@model PagedList.IPagedList<Forum.Models.ForumPost>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = @ViewBag.PostsCategory;
+}
+
+<div class="jumbotron">
+    @using (Html.BeginForm())
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            <div >
+                @Html.Hidden("ForumCategoryId", @ViewBag.ForumCategoryId as string)
+                @Html.Hidden("ForumUserId", @ViewBag.User as string)
+                New post:
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                @Html.TextAreaFor(model => model.FirstOrDefault().Text, new { maxlength = 500, placeholder = "New title", @class = "form-control", style = "width: 100%; max-width: 100%;" })
+                <input class="btn btn-outline-secondary" type="submit" value="Add" />
+                <br />
+                <br />
+            </div>
+            }
+            else
+            {
+                <div>
+                    Please @Html.ActionLink("Log in", "Login", "Account", new { returnURL = "/Post/Posts/" + @ViewBag.ForumCategoryId }, null) for adding new post
+                </div>
+            }
+        }
+
+    <table class="table">
+        <tr>
+            <th>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().ForumUserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Date)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(Convert.ToString(@Html.DisplayFor(modelItem => item.Text)), "Comments", "Comment", new { id = item.ID }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @if (User.IsInRole("admin") || item.ForumUserId == @ViewBag.User)
+                    {
+                        <div>
+                            @Html.ActionLink("Edit", "Edit", "Home", new { id = item.ID, type = item, returnURL = Request.Url.ToString() }, null) |
+                            @Html.ActionLink("Delete", "Delete", "Home", new { id = item.ID, type = item, returnURL = Request.Url.ToString() }, null)
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>
+
+
+
+    <br />
+    @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Posts", new { page }))
+
+    @Html.ActionLink("Back to Categories", "Index", "Home", new { id = 1 }, null)
+
+    <script type="text/javascript">
+        $(function () {
+            $("#Text").html("");
+        });
+    </script>
+</div>

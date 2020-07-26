@@ -11,12 +11,16 @@
 
             @Html.HiddenFor(model => model.ID)
 
-            <div>
-                <h3>Edit</h3>
-                <br />
-                @Html.TextAreaFor(model => model.Text, new { @class = "form-control", style = "width: 100%; max-width: 100%;" })
-                @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
+        <div>
+            <h3>Edit</h3>
+            <br />
+            @Html.TextAreaFor(model => model.Text, new { @class = "form-control", style = "width: 100%; max-width: 100%;" })
+            @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
+
+            <div class = "text-danger">
+                @ViewBag.ErrorMessage
             </div>
+        </div>
 
             <div>
                 <input type="submit" class="btn btn-outline-secondary" value="Save" />

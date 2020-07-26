@@ -74,6 +74,7 @@ namespace ForumTest
             MockContext.Setup(i => i.ForumPosts.Find(It.IsAny<int>())).Returns(posts.First());
             MockContext.Setup(i => i.ForumComments).Returns(MockComments.Object);
             MockContext.Setup(i => i.ForumComments.Find(It.IsAny<int>())).Returns(comments.First());
+            MockContext.Setup(i => i.Set(typeof(ForumCategory)).Find(It.IsAny<int>())).Returns(MockCategories.Object);
             MockContext.Setup(i => i.Users).Returns(MockUsers.Object);
 
             var mockIdentity = new Mock<ClaimsIdentity>();

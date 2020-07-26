@@ -33,31 +33,32 @@
 
         @foreach (var item in Model.Categories)
         {
-    <tr>
-        <td>
-            <div>
-                @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Text)), "Posts", new { id = item.ID })
-            </div>
-        </td>
-        <td>
-            <div>
-                @Model.Posts.Where(i => i.ForumCategoryId == item.ID).Count()
-            </div>
-        </td>
-        <td>
-            @if (User.IsInRole("admin"))
-            {
-                <div>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item, page = Model.Categories.PageNumber }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
-                </div>
-            }
-        </td>
-    </tr>
+            <tr>
+                <td>
+                    <div>
+                        @Html.ActionLink(Convert.ToString(Html.DisplayFor(modelItem => item.Text)), "Posts", "Post", new { id = item.ID }, null)
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        @Model.Posts.Where(i => i.ForumCategoryId == item.ID).Count()
+                    </div>
+                </td>
+                <td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <div>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.ID, type = item, page = Model.Categories.PageNumber, returnURL = Request.Url.ToString() }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ID, type = item, returnURL = Request.Url.ToString() })
+                        </div>
+                    }
+                </td>
+            </tr>
         }
     </table>
 
     @(Model.Categories.PageCount < Model.Categories.PageNumber ? 0 : Model.Categories.PageNumber) из @Model.Categories.PageCount
 
     @Html.PagedListPager(Model.Categories, page => Url.Action("Index", new { page }))
+    
 </div>

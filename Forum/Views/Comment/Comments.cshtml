@@ -41,8 +41,8 @@
                     @if (User.IsInRole("admin") || item.ForumUserId == @ViewBag.User)
                     {
                         <div>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.ID, item = item }) |
-                            @Html.ActionLink("Delete", "Delete", new { id = item.ID, item = item })
+                            @Html.ActionLink("Edit", "Edit", "Home", new { id = item.ID, type = item, returnURL = Request.Url.ToString() }, null) |
+                            @Html.ActionLink("Delete", "Delete", "Home", new { id = item.ID, type = item, returnURL = Request.Url.ToString() }, null)
                         </div>
                     }
                 </td>
@@ -56,13 +56,14 @@
         {
             @Html.Hidden("ForumPostId", @ViewBag.ForumPostId as string)
             @Html.Hidden("ForumUserId", @ViewBag.User as string)
+            @Html.ValidationSummary("", new { @class = "text-danger" })
             @Html.TextAreaFor(model => model.FirstOrDefault().Text, new { value = "", placeholder = "New comment", @class = "form-control", style = "width: 100%; max-width: 100%;" })
             <input type="submit" class="btn btn-outline-secondary" value="Add" />
         }
         else
         {
             <div>
-                Please @Html.ActionLink("Log in", "Login", "Account", new { returnURL = "/Home/Comments/" + @ViewBag.ForumPostId }, null) for adding new comment
+                Please @Html.ActionLink("Log in", "Login", "Account", new { returnURL = "/Comment/Comments/" + @ViewBag.ForumPostId }, null) for adding new comment
             </div>
         }
     }
@@ -71,7 +72,7 @@
 
     @Html.PagedListPager(Model, page => Url.Action("Comments", new { page }))
 
-    @Html.ActionLink("Back to Posts", "Posts", new { id = @ViewBag.ForumCategoryId })
+    @Html.ActionLink("Back to Posts", "Posts", "Post", new { id = @ViewBag.ForumCategoryId }, null)
 
     <script type="text/javascript">
         $(function () {

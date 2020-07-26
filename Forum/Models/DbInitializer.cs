@@ -60,7 +60,11 @@ namespace Forum.Models
 
             if (result.Succeeded)
             {
-                userManager.AddToRole(user.Id, adminRole.Name);
+                if (user.UserName == "Admin")
+                {
+                    userManager.AddToRole(user.Id, adminRole.Name);
+                }
+
                 userManager.AddToRole(user.Id, userRole.Name);
             }
         }
