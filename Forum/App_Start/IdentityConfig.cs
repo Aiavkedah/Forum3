@@ -19,9 +19,8 @@ namespace Forum
     {
         public Task SendAsync(IdentityMessage message)
         {
-            //TODO enter test email and password for new user email confirmation
-            var from = "";
-            var pass = "";
+            var from = "mnvMushroom@gmail.com";
+            var pass = "ASD123!fg";
 
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
             {

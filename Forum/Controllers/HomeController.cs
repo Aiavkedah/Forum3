@@ -25,9 +25,12 @@ namespace Forum.Controllers
                 Categories = Db.ForumCategories.ToList().ToPagedList(page, PageSize),
                 Posts = Db.ForumPosts.ToList()
             };
-            
-            ViewBag.Count = PageSize - (PageSize * page - Db.ForumCategories.Count());
-            ViewBag.Page = page - 1;
+
+            if (page != 1)
+            {
+                ViewBag.Count = PageSize - (PageSize * page - Db.ForumCategories.Count());
+                ViewBag.Page = page - 1;
+            }
 
             return View(view);
         }
