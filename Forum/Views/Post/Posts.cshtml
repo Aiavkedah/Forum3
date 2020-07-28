@@ -60,7 +60,7 @@
                     {
                         <div>
                             @Html.ActionLink("Edit", "Edit", "Home", new { id = item.ID, type = item, returnURL = Request.Url.ToString() }, null) |
-                            @Html.ActionLink("Delete", "Delete", "Home", new { id = item.ID, type = item, returnURL = Request.Url.ToString() }, null)
+                            @Html.ActionLink("Delete", "Delete", "Home", new { id = item.ID, type = item, returnURL = ViewBag.Count == 1 ? "/Post/Posts/" + ViewBag.ForumCategoryId + "?page=" + ViewBag.Page : Request.Url.ToString() }, null)
                         </div>
                     }
                 </td>

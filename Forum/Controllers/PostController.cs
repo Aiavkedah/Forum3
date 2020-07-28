@@ -31,6 +31,8 @@ namespace Forum.Controllers
                 ViewBag.PostsCategory = category.Text;
                 ViewBag.ForumCategoryId = id;
                 ViewBag.User = User.Identity.GetUserId();
+                ViewBag.Count = PageSize - (PageSize * page - posts.Count());
+                ViewBag.Page = page - 1;
 
                 return View(posts.ToPagedList(page, PageSize));
             }

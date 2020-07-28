@@ -49,7 +49,7 @@
                     {
                         <div>
                             @Html.ActionLink("Edit", "Edit", new { id = item.ID, type = item, page = Model.Categories.PageNumber, returnURL = Request.Url.ToString() }) |
-                            @Html.ActionLink("Delete", "Delete", new { id = item.ID, type = item, returnURL = Request.Url.ToString() })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ID, type = item, returnURL = ViewBag.Count == 1 ? "/Home/Index/?page=" + ViewBag.Page : Request.Url.ToString() })
                         </div>
                     }
                 </td>
