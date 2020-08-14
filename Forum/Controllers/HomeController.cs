@@ -65,7 +65,7 @@ namespace Forum.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id, string type, string returnURL)
         {
-            var item = FindItemById(id, type);
+            ForumModel item = FindItemById(id, type);
 
             if (item == null)
             {
@@ -81,7 +81,7 @@ namespace Forum.Controllers
         [HttpGet]
         public ActionResult Edit(int id, string type)
         {
-            var item = FindItemById(id, type);
+            ForumModel item = FindItemById(id, type);
 
             if (item == null)
             {
@@ -95,7 +95,7 @@ namespace Forum.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ForumModel model, string type, string returnURL)
         {
-            var item = FindItemById(model.ID, type);
+            ForumModel item = FindItemById(model.ID, type);
 
             if (item == null)
             {
@@ -104,7 +104,7 @@ namespace Forum.Controllers
 
             if (ModelState.IsValid)
             {
-                ((ForumModel)item).Text = model.Text;
+                item.Text = model.Text;
 
                 try
                 {
@@ -124,7 +124,7 @@ namespace Forum.Controllers
             return View(model);
         }
 
-        public object FindItemById(int id, string type)
+        public ForumModel FindItemById(int id, string type)
         {
             Type itemType = Type.GetType(type);
 
@@ -132,7 +132,7 @@ namespace Forum.Controllers
 
             PropertyInfo propertyInfo = Db.GetType().GetProperties().Where(p => p.PropertyType == tableType).FirstOrDefault();
 
-            return Db.Set(itemType).Find(id);
+            return Db.Set(itemType).Find(id) as ForumModel;
         }
 
     }
