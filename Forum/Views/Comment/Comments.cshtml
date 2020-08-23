@@ -11,14 +11,7 @@
     <br />
     <table class="table">
         <tr>
-            <th>
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().ForumUserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().Date)
-            </th>
+            <th></th>
             <th></th>
         </tr>
 
@@ -27,15 +20,12 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Text)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
-                </td>
-
-                <td>
+                    <b>@Html.DisplayFor(modelItem => item.ApplicationUser.UserName)</b>
                     @Html.DisplayFor(modelItem => item.Date)
+                    <br />
+                    <br />@Html.DisplayFor(modelItem => item.Text)
                 </td>
+                
                 <td>
 
                     @if (User.IsInRole("admin") || item.ForumUserId == @ViewBag.User)
